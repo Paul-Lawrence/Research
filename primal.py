@@ -4,7 +4,7 @@ import pandas as pd
 import numpy as np
 
 def main():
-	fname='sampleR.xlsx'
+	fname='2x3.xlsx'
 	N,R=getData(fname)
 	rBar=getRbar(R)
 	m=gp.Model('primal')
