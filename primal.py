@@ -9,7 +9,7 @@ def main():
 	rBar=getRbar(R)
 	m=gp.Model('primal')
 	theta, p, pi=getVars(R,m)
-	m.setObjective(sum(N[i]*p[i,j] for j in range(len(R[0])) for i in range(len(R))), GRB.MAXIMIZE)
+
 	setCons(m,N,R,rBar,theta, p, pi)
 	#m.write('primal.lp')
 	m.optimize()
@@ -17,14 +17,24 @@ def main():
 		print(var)
 	print(m.display())
 	print(m.getAttr(GRB.Attr.X, m.getVars()))
+	print(rBar)
 
 def getData(fname):
 	df = pd.read_excel(fname)
 	M=df.to_numpy()
 	return (M[:,0], M[:,1:])
 	
-def getRbar(R):
+def getrBar(R):
 	return R.max(axis=0)
+	
+def buildModel(R,N,m):
+	rBar=getrBar(R)
+	Vars=getVars(R,m)
+	setobj(N,m,Vars[1],len(R[0]))
+	setCons(m,N,R,rBar,Vars[0],Vars[1],Vars[2])
+	
+def setobj(N,m,p,d):
+	m.setObjective(sum(N[i]*p[i,j] for j in range(d) for i in range(len(N))), GRB.MAXIMIZE)
 
 def getVars(R,m):
 	n=len(R)
@@ -43,4 +53,4 @@ def setCons(m,N,R,rBar,theta, p, pi):
 	m.addConstrs((p[i,j]-R[i,j]*theta[i,j]<=0 for i in range(n) for j in range(d)), name='D')
 	m.addConstrs((p[i,j]-pi[j]<=0 for i in range(n) for j in range(d)), name='E')	
 	
-main()
+#main()
