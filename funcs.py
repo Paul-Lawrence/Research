@@ -33,30 +33,39 @@ def rBar_n(R):
 #def guru_approx(N,rBar):
 	#break
 	
-def profit(R,pi,theta):
+def profit(N,pi,theta):
 	S=0
-	for i in range(len(R)):
-		S+=R[i][theta[i]]*pi[theta[i]]
+	for i in range(len(N)):
+		S+=N[i]*pi[theta[i]]
 	return S
+
+def bad_upper(N,rBar):
+	s=0
+	for i in range(len(N)):
+		s+=N[i]*rBar[i]
+	return s
 	
 def singlePrice(R,N): #Calculates value of the single-price Guru algorithm
 	sigma=getSigma(R)
 	rBar=rBar_n(R)
 	inds=np.flip(rBar.argsort())
-	rBar,N=rBar[inds],N[inds]
+	R,rBar,N=R[inds],rBar[inds],N[inds]
 	L=[]
 	for i in range(len(R)):	
 		L.append(rBar[i]*sum(N[0:i+1]))
 	l=np.argmax(L)
-	pi=[l]*len(R[0])
+	pi=[rBar[l]]*len(R[0])
+	zeros=[0]*len(R)
+	R=np.insert(R,0, zeros, axis=1)
+	pi=np.insert(pi,0,0)
 	theta=assign(R,pi)
-	return profit(R,pi,theta)
+	return profit(N,pi,theta)
 	
 		
 def assign(R,pi): #Takes as input a set of R values and a pricing vector and returns a 
 	theta=[] #corresponding assignment vector theta
 	for i in range(len(R)): 
-		theta.append(np.argmax([R[i][k]-pi[k] for k in range(len(R[0]))]))
+		theta.append(len(R[0])-np.argmax(np.flip([R[i][k]-pi[k] for k in range(len(R[0]))]))-1)
 	return theta
 	
 def solveDual(R,N):
@@ -70,13 +79,10 @@ def solvePrimal(R,N):
 	model.optimize()
 
 def main():
-	n=10
-	m=10
-	R=generateRs(n,m,1,100)
-	N=generateNs(n,1,50)	
-	solveDual(R,N)
+	N,R=getData('bad_dk.xlsx')
 	solvePrimal(R,N)
 	print(singlePrice(R,N))
+	print(bad_upper(N,rBar_n(R)))
 
-model=gp.Model('solver')
+#model=gp.Model('solver')
 main()
