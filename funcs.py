@@ -59,7 +59,16 @@ def singlePrice(R,N): #Calculates value of the single-price Guru algorithm
 	R=np.insert(R,0, zeros, axis=1)
 	pi=np.insert(pi,0,0)
 	theta=assign(R,pi)
+	print(theta)
+	print(pi) 
 	return profit(N,pi,theta)
+	
+def printVars(m):
+	m.printAttr('X')
+		
+def printCons(m):
+	for con in m.getConstrs():
+		print(con)
 	
 		
 def assign(R,pi): #Takes as input a set of R values and a pricing vector and returns a 
@@ -72,17 +81,20 @@ def solveDual(R,N):
 	model=gp.Model('dual')
 	dual.buildModel(R,N,model)
 	model.optimize()
+	return model
 	
 def solvePrimal(R,N):
 	model=gp.Model('primal')
 	primal.buildModel(R,N,model)
 	model.optimize()
+	return model
 
 def main():
 	N,R=getData('bad_dk.xlsx')
-	solvePrimal(R,N)
+	model=solveDual(R,N)
+	#printVars(model)
+	model.printAttr('X')
+	model.write('bad_dk_dual.lp')
 	print(singlePrice(R,N))
-	print(bad_upper(N,rBar_n(R)))
-
 #model=gp.Model('solver')
 main()
