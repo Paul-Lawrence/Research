@@ -20,7 +20,7 @@ def writeto(m,fname):
 	m.write(fname)
 	
 def getData(fname):
-	df = pd.read_excel(fname)
+	df = pd.read_excel('{}.xlsx'.format(fname))
 	M=df.to_numpy()
 	return (M[:,0], M[:,1:])
 	
@@ -83,18 +83,24 @@ def solveDual(R,N):
 	model.optimize()
 	return model
 	
+def writeSol(m):
+	return 0
+	
 def solvePrimal(R,N):
 	model=gp.Model('primal')
 	primal.buildModel(R,N,model)
 	model.optimize()
 	return model
+	
 
 def main():
-	N,R=getData('bad_dk.xlsx')
+	fname='bad_dk'
+	N,R=getData(fname)
 	model=solveDual(R,N)
 	#printVars(model)
 	model.printAttr('X')
-	model.write('bad_dk_dual.lp')
+	model.write('bad_dk_dual_2.lp')
+	model.write('bad_dk_dual_2.sol')
 	print(singlePrice(R,N))
 #model=gp.Model('solver')
 main()

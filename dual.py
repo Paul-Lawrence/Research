@@ -39,11 +39,11 @@ def setobj(n,model,rBar,Y,G):
 def getVars(R,m):
 	n=len(R)
 	j=len(R[0])
-	Y=m.addVars(n)
-	G=m.addVars(n,j)
-	w=m.addVars(n,j)
-	sig=m.addVars(n,j)
-	bet=m.addVars(n,j)
+	Y=m.addVars(n, name='y')
+	G=m.addVars(n,j, name='gamma')
+	w=m.addVars(n,j, name='w')
+	sig=m.addVars(n,j, name='sigma')
+	bet=m.addVars(n,j, name='beta')
 	return [Y,G,w,sig,bet]
 
 def setCons(m,N,R,rBar,Y,G,w,sig,bet):
