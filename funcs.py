@@ -19,8 +19,11 @@ def generateRs(n,m,lb=1000,ub=100000): #Generates an n x m array of R_i's accord
 def writeto(m,fname):
 	m.write(fname)
 	
-def getData(fname):
-	df = pd.read_excel('{}.xlsx'.format(fname))
+def getData(fname, sheetname='None'):
+	if (sheetname=='None'):	
+		df = pd.read_excel('{}.xlsx'.format(fname))
+	else:
+		df=pd.read_excel('{}.xlsx'.format(fname), sheet_name=sheetname)
 	M=df.to_numpy()
 	return (M[:,0], M[:,1:])
 	
@@ -83,8 +86,13 @@ def solveDual(R,N):
 	model.optimize()
 	return model
 	
-def writeSol(m):
-	return 0
+def writeDual(model, fname, sheet):
+	model.write('{}_dual_{}.lp'.format(fname,sheet))
+	model.write('{}_dual_{}.sol'.format(fname,sheet))
+	
+def writePrimal(model, fname, sheet):
+	model.write('{}_primal_{}.lp'.format(fname,sheet))
+	model.write('{}_primal_{}.sol'.format(fname,sheet))
 	
 def solvePrimal(R,N):
 	model=gp.Model('primal')
@@ -95,12 +103,14 @@ def solvePrimal(R,N):
 
 def main():
 	fname='bad_dk'
-	N,R=getData(fname)
+	sheet='Sheet2'
+	N,R=getData(fname,sheet)
 	model=solveDual(R,N)
 	#printVars(model)
-	model.printAttr('X')
-	model.write('bad_dk_dual_2.lp')
-	model.write('bad_dk_dual_2.sol')
+	#model.printAttr('X')
+	writeDual(model,fname,sheet)
 	print(singlePrice(R,N))
+	rBar=rBar_n(R)
+	print(bad_upper(N,rBar))
 #model=gp.Model('solver')
 main()
