@@ -72,6 +72,7 @@ def printVars(m):
 def printCons(m):
 	for con in m.getConstrs():
 		print(con)
+		
 	
 		
 def assign(R,pi): #Takes as input a set of R values and a pricing vector and returns a 
@@ -103,7 +104,7 @@ def solvePrimal(R,N):
 
 def main():
 	fname='bad_dk'
-	sheet='Sheet2'
+	sheet='Sheet3'
 	N,R=getData(fname,sheet)
 	model=solveDual(R,N)
 	#printVars(model)
