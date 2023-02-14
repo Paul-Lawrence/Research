@@ -104,7 +104,7 @@ def solvePrimal(R,N):
 
 def main():
 	fname='bad_dk'
-	sheet='Sheet3'
+	sheet='Sheet4'
 	N,R=getData(fname,sheet)
 	model=solveDual(R,N)
 	#printVars(model)
